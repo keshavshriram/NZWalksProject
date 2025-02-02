@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using NZWalks_API.Data;
 using NZWalks_API.Models.Domain;
 using NZWalks_API.Models.DTO;
@@ -22,7 +23,19 @@ namespace NZWalks_API.Controllers
         public IActionResult GetAll()
         {
             List<Region> regions = this._dbContext.Regions.ToList();
-            return Ok(regions); 
+
+            List<RegionDto> RegionDtoList = new List<RegionDto>();
+
+            foreach ( var region in regions )
+            {
+                RegionDtoList.Add(new RegionDto
+                {
+                    Code = region.Code,
+                    Name = region.Name,
+                    RegionImageUrl = region.RegionImageUrl
+                });
+            }
+            return Ok(RegionDtoList); 
         }
 
         [HttpGet]
@@ -52,10 +65,22 @@ namespace NZWalks_API.Controllers
             //result.Success = true; 
 
             return Ok(regionDto); 
-
-            // Changes 
         }
+        [HttpPost]
+        public IActionResult CreateRegion(RegionCreateDto region)
+        { 
+            // Converted Dto to Domain Model . 
+            Region regionDomain = new Region {
+                Code = region.Code,
+                Name = region.Name,
+                RegionImageUrl = region.RegionImageUrl
+            };
 
-        // 
+            // I Used Domain Model To Create Region Record . 
+            _dbContext.Regions.Add(regionDomain);
+            _dbContext.SaveChanges();
+
+            return CreatedAtAction(nameof(getRegionById), new { Id = regionDomain.Id } );
+        }
     }
 }
