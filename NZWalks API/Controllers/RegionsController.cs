@@ -10,9 +10,9 @@ namespace NZWalks_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RegionsController : ControllerBase 
+    public class RegionsController : ControllerBase
     {
-        private readonly NZWalksDBContext _dbContext ; 
+        private readonly NZWalksDBContext _dbContext;
         public RegionsController(NZWalksDBContext dbContext)
         {
             _dbContext = dbContext;
@@ -26,7 +26,7 @@ namespace NZWalks_API.Controllers
 
             List<RegionDto> RegionDtoList = new List<RegionDto>();
 
-            foreach ( var region in regions )
+            foreach (var region in regions)
             {
                 RegionDtoList.Add(new RegionDto
                 {
@@ -35,7 +35,7 @@ namespace NZWalks_API.Controllers
                     RegionImageUrl = region.RegionImageUrl
                 });
             }
-            return Ok(RegionDtoList); 
+            return Ok(RegionDtoList);
         }
 
         [HttpGet]
@@ -64,11 +64,11 @@ namespace NZWalks_API.Controllers
             //result.Result = item;
             //result.Success = true; 
 
-            return Ok(regionDto); 
+            return Ok(regionDto);
         }
         [HttpPost]
         public IActionResult CreateRegion([FromBody] RegionCreateDto region)
-        { 
+        {
             // Converted Dto to Domain Model . 
             Region regionDomain = new Region {
                 Code = region.Code,
@@ -88,7 +88,40 @@ namespace NZWalks_API.Controllers
                 RegionImageUrl = regionDomain.RegionImageUrl
             };
 
-            return CreatedAtAction(nameof(getRegionById) , new { id = regionDomain.Id} , RegionDto);
+            return CreatedAtAction(nameof(getRegionById), new { id = regionDomain.Id }, RegionDto);
         }
+
+        [HttpPut]
+        [Route("id")]
+        public IActionResult UpdateRegion([FromRoute] Guid id , [FromBody] RegionDto regionDto)
+        {
+            // Checking existence of record with this id 
+
+            var existingRecord = _dbContext.Regions.FirstOrDefault(region => region.Id == id);
+
+            if (existingRecord == null)
+            {
+                return NotFound();
+            }
+
+
+            // Updating Region
+            existingRecord.Code = regionDto.Code;
+            existingRecord.Name = regionDto.Name;
+            existingRecord.RegionImageUrl = regionDto.RegionImageUrl;
+
+            _dbContext.SaveChanges();
+
+            var RegionUpdatedDto = new RegionDto
+            {
+                Id = existingRecord.Id,
+                Code = existingRecord.Code,
+                Name = existingRecord.Name,
+                RegionImageUrl = existingRecord.RegionImageUrl
+            };
+
+            return Ok(RegionUpdatedDto);
+        }
+
     }
 }
