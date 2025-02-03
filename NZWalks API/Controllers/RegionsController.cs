@@ -80,7 +80,15 @@ namespace NZWalks_API.Controllers
             _dbContext.Regions.Add(regionDomain);
             _dbContext.SaveChanges();
 
-            return Ok(regionDomain);
+            var RegionDto = new RegionDto
+            {
+                Id = regionDomain.Id,
+                Code = regionDomain.Code,
+                Name = regionDomain.Name,
+                RegionImageUrl = regionDomain.RegionImageUrl
+            };
+
+            return CreatedAtAction(nameof(getRegionById) , new { id = regionDomain.Id} , RegionDto);
         }
     }
 }
