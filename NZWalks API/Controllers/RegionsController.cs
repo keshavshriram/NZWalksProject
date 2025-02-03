@@ -67,7 +67,7 @@ namespace NZWalks_API.Controllers
             return Ok(regionDto); 
         }
         [HttpPost]
-        public IActionResult CreateRegion(RegionCreateDto region)
+        public IActionResult CreateRegion([FromBody] RegionCreateDto region)
         { 
             // Converted Dto to Domain Model . 
             Region regionDomain = new Region {
@@ -80,7 +80,7 @@ namespace NZWalks_API.Controllers
             _dbContext.Regions.Add(regionDomain);
             _dbContext.SaveChanges();
 
-            return CreatedAtAction(nameof(getRegionById), new { Id = regionDomain.Id } );
+            return Ok(regionDomain);
         }
     }
 }
