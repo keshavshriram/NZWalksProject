@@ -92,8 +92,8 @@ namespace NZWalks_API.Controllers
         }
 
         [HttpPut]
-        [Route("id")]
-        public IActionResult UpdateRegion([FromRoute] Guid id , [FromBody] RegionDto regionDto)
+        [Route("{id:Guid}")]
+        public IActionResult UpdateRegion([FromRoute] Guid id , [FromBody] UpdateRegionDto regionDto)
         {
             // Checking existence of record with this id 
 
@@ -102,7 +102,7 @@ namespace NZWalks_API.Controllers
             if (existingRecord == null)
             {
                 return NotFound();
-            }
+            } 
 
 
             // Updating Region
