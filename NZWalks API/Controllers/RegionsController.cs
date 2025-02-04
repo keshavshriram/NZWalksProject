@@ -93,7 +93,7 @@ namespace NZWalks_API.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
-        public IActionResult UpdateRegion([FromRoute] Guid id , [FromBody] UpdateRegionDto regionDto)
+        public IActionResult UpdateRegion([FromRoute] Guid id, [FromBody] UpdateRegionDto regionDto)
         {
             // Checking existence of record with this id 
 
@@ -102,7 +102,7 @@ namespace NZWalks_API.Controllers
             if (existingRecord == null)
             {
                 return NotFound();
-            } 
+            }
 
 
             // Updating Region
@@ -122,6 +122,29 @@ namespace NZWalks_API.Controllers
 
             return Ok(RegionUpdatedDto);
         }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public IActionResult DeleteRegion([FromRoute] Guid id)
+        {
+            var region = _dbContext.Regions.FirstOrDefault(region => region.Id == id );
+            if (region == null)
+            {
+                return NotFound();
+            }
+            _dbContext.Regions.Remove(region);
+            _dbContext.SaveChanges();
+
+            var regionDto = new RegionDto {
+                Id = region.Id,
+                Code = region.Code,
+                Name = region.Name,
+                RegionImageUrl = region.RegionImageUrl
+            };
+
+            return Ok(regionDto);
+        }
+
 
     }
 }
