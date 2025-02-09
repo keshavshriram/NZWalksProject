@@ -46,14 +46,14 @@ namespace NZWalks_API.Controllers
         }
 
         [HttpGet]
-        [Route("{id}")]
-        public async Task<IActionResult> getRegionById([FromRoute] Guid id)
+        [Route("{Id}")]
+        public async Task<IActionResult> getRegionById([FromRoute] Guid Id)
         {
             //dynamic result = new ExpandoObject();
             //var item = _dbContext.Regions.Find(id);
 
             //Holding item in a domain model
-            Region item = await _regionRepository.GetRegionByIdAsync(id);
+            Region item = await _regionRepository.GetRegionByIdAsync(Id);
 
 
             if (item == null)
@@ -100,12 +100,12 @@ namespace NZWalks_API.Controllers
         }
 
         [HttpPut]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> UpdateRegion([FromRoute] Guid id, [FromBody] UpdateRegionDto regionDto)
+        [Route("{Id:Guid}")]
+        public async Task<IActionResult> UpdateRegion([FromRoute] Guid Id, [FromBody] UpdateRegionDto regionDto)
         {
             // Checking existence of record with this id 
 
-            var result = await _regionRepository.UpdateRegionAsync(id ,regionDto );
+            var result = await _regionRepository.UpdateRegionAsync(Id ,regionDto );
 
             if (result == null)
             {
@@ -132,7 +132,7 @@ namespace NZWalks_API.Controllers
         }
 
         [HttpDelete]
-        [Route("{id:Guid}")]
+        [Route("{Id:Guid}")]
         public async Task<IActionResult> DeleteRegion([FromRoute] Guid Id)
         {
             //var region = await _dbContext.Regions.FirstOrDefaultAsync(region => region.Id == id );
@@ -144,8 +144,8 @@ namespace NZWalks_API.Controllers
                 return NotFound();
             }
 
-            _dbContext.Regions.Remove(region);
-            await _dbContext.SaveChangesAsync();
+            //_dbContext.Regions.Remove(region);
+            //await _dbContext.SaveChangesAsync();
 
             var regionDto = new RegionDto {
                 Id = region.Id,
