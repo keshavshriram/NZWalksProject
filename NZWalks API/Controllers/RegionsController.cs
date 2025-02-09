@@ -53,8 +53,9 @@ namespace NZWalks_API.Controllers
             //var item = _dbContext.Regions.Find(id);
 
             //Holding item in a domain model
+            Region item = await _regionRepository.GetRegionByIdAsync(id);
 
-            var item = await _dbContext.Regions.FirstOrDefaultAsync(record => record.Id == id);
+
             if (item == null)
             {
                 return NotFound();
@@ -84,15 +85,15 @@ namespace NZWalks_API.Controllers
             };
 
             // I Used Domain Model To Create Region Record . 
-            await _dbContext.Regions.AddAsync(regionDomain);
-            await _dbContext.SaveChangesAsync();
+
+            Region result = await _regionRepository.CreateRegionAsync(regionDomain);
 
             var RegionDto = new RegionDto
             {
-                Id = regionDomain.Id,
-                Code = regionDomain.Code,
-                Name = regionDomain.Name,
-                RegionImageUrl = regionDomain.RegionImageUrl
+                Id = result.Id,
+                Code = result.Code,
+                Name = result.Name,
+                RegionImageUrl = result.RegionImageUrl
             };
 
             return CreatedAtAction(nameof(getRegionById), new { id = regionDomain.Id }, RegionDto);
@@ -104,41 +105,45 @@ namespace NZWalks_API.Controllers
         {
             // Checking existence of record with this id 
 
-            var existingRecord = await _dbContext.Regions.FirstOrDefaultAsync(region => region.Id == id);
+            var result = await _regionRepository.UpdateRegionAsync(id ,regionDto );
 
-            if (existingRecord == null)
+            if (result == null)
             {
                 return NotFound();
             }
 
 
             // Updating Region
-            existingRecord.Code = regionDto.Code;
-            existingRecord.Name = regionDto.Name;
-            existingRecord.RegionImageUrl = regionDto.RegionImageUrl;
+            //existingRecord.Code = regionDto.Code;
+            //existingRecord.Name = regionDto.Name;
+            //existingRecord.RegionImageUrl = regionDto.RegionImageUrl;
 
-            await _dbContext.SaveChangesAsync();
+            //await _dbContext.SaveChangesAsync();
 
-            var RegionUpdatedDto = new RegionDto
-            {
-                Id = existingRecord.Id,
-                Code = existingRecord.Code,
-                Name = existingRecord.Name,
-                RegionImageUrl = existingRecord.RegionImageUrl
-            };
+            //var RegionUpdatedDto = new RegionDto
+            //{
+            //    Id = existingRecord.Id,
+            //    Code = existingRecord.Code,
+            //    Name = existingRecord.Name,
+            //    RegionImageUrl = existingRecord.RegionImageUrl
+            //};
 
-            return Ok(RegionUpdatedDto);
+            return Ok(result);
         }
 
         [HttpDelete]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> DeleteRegion([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteRegion([FromRoute] Guid Id)
         {
-            var region = await _dbContext.Regions.FirstOrDefaultAsync(region => region.Id == id );
+            //var region = await _dbContext.Regions.FirstOrDefaultAsync(region => region.Id == id );
+
+            Region? region = await _regionRepository.DeleteRegionAsync(Id);
+
             if (region == null)
             {
                 return NotFound();
             }
+
             _dbContext.Regions.Remove(region);
             await _dbContext.SaveChangesAsync();
 
