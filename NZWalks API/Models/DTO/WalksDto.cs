@@ -1,4 +1,6 @@
-﻿namespace NZWalks_API.Models.DTO
+﻿using NZWalks_API.Models.Domain;
+
+namespace NZWalks_API.Models.DTO
 {
     public class WalksDto
     {
@@ -10,5 +12,10 @@
 
         public Guid DificultyId { get; set; }
         public Guid RegionId { get; set; }
+
+
+
+        public DificultyDto Dificulty { get; set; }
+        public RegionDto Region { get; set; }
     }
 }
