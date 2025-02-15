@@ -17,7 +17,20 @@ namespace NZWalks_API.Repositories
             await _dbContext.Walks.AddAsync(walk);
             await _dbContext.SaveChangesAsync();
 
-            return new Walk();
+            return walk;
+        }
+
+        public async Task<List<Walk>> GetAllAsync()
+        {
+            List<Walk> walksDomain = await _dbContext.Walks.ToListAsync();
+            return walksDomain;
+
+        }
+
+        public async Task<Walk?> GetWalkByIdAsync(Guid Id)
+        {
+            Walk? walkDomain = await _dbContext.Walks.FirstOrDefaultAsync(walk => walk.Id == Id);
+            return walkDomain;
         }
     }
 }
