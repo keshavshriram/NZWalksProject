@@ -29,8 +29,37 @@ namespace NZWalks_API.Repositories
 
         public async Task<Walk?> GetWalkByIdAsync(Guid Id)
         {
-            Walk? walkDomain = await _dbContext.Walks.FirstOrDefaultAsync(walk => walk.Id == Id);
+            Walk? walkDomain = await _dbContext.Walks.Include("Dificulty").Include("Region").FirstOrDefaultAsync(walk => walk.Id == Id);
             return walkDomain;
+        }
+
+        public async Task<Walk?> UpdateWalkAsync(Guid Id , UpdateWalkDto walk)
+        {
+            Walk? existingWalk = await _dbContext.Walks.FirstOrDefaultAsync(walk => walk.Id == Id);
+            if (existingWalk != null)
+            {
+                existingWalk.Name = walk.Name;
+                existingWalk.Description = walk.Description;
+                existingWalk.LengthInKm = walk.LengthInKm;
+                existingWalk.WalkImageUrl = walk.WalkImageUrl;
+                existingWalk.DificultyId = walk.DificultyId;
+                existingWalk.RegionId = walk.RegionId;
+
+                await _dbContext.SaveChangesAsync();
+            }
+            return existingWalk;
+        }
+
+        public async Task<Walk?> DeleteWalkAsync(Guid Id)
+        {
+            Walk? existingRecord = await _dbContext.Walks.Include("Dificulty").Include("Region").FirstOrDefaultAsync(walk => walk.Id == Id);
+            if (existingRecord != null)
+            {
+                _dbContext.Remove(existingRecord);
+                await _dbContext.SaveChangesAsync();
+            }
+
+            return existingRecord;
         }
     }
 }
