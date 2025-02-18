@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NZWalks_API.CustomActions;
 using NZWalks_API.Models.Domain;
 using NZWalks_API.Models.DTO;
 using NZWalks_API.Repositories;
@@ -20,28 +21,20 @@ namespace NZWalks_API.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> CreateWalk( [FromBody] WalkCreateDto createWalk)
         {
-            if (ModelState.IsValid)
+            var walkDomain = _mapper.Map<Walk>(createWalk);
+            var result = await _walksRepository.CreateWalksAsync(walkDomain);
+
+            if (result == null)
             {
-                var walkDomain = _mapper.Map<Walk>(createWalk);
-                var result = await _walksRepository.CreateWalksAsync(walkDomain);
-
-                if (result == null)
-                {
-                    return NotFound();
-                }
-
-                var response = _mapper.Map<WalksDto>(result);
-
-                return Ok(response);
+                return NotFound();
             }
-            else
-            {
-                return BadRequest(ModelState);
-            }
-            
-            
+
+            var response = _mapper.Map<WalksDto>(result);
+
+            return Ok(response);
 
         }
 
