@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NZWalks_API.Data;
 using NZWalks_API.Models.Domain;
 using NZWalks_API.Models.DTO;
+using System.Linq;
 
 namespace NZWalks_API.Repositories
 {
@@ -14,10 +16,31 @@ namespace NZWalks_API.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<List<Region?>> GetAllAsync()
+        public async Task<List<Region?>> GetAllAsync(string? filterColumnName , string? filterValue , string? sortByColumn , bool? IsAscending , int PageIndex , int PageSize )  
         {
-            var result = await _dbContext.Regions.ToListAsync();
-            return result;
+            var regions = _dbContext.Regions.AsQueryable();
+            
+                if ((filterColumnName != null && filterColumnName.Equals("name", StringComparison.OrdinalIgnoreCase)) || (sortByColumn != null && sortByColumn.Equals("name", StringComparison.OrdinalIgnoreCase )))
+                {
+                    if (!filterValue.IsNullOrEmpty() && !filterColumnName.IsNullOrEmpty())
+                    {
+                        regions = regions.Where(column => column.Name.Contains(filterValue));
+                    }
+                    
+                    if ( IsAscending == true )
+                    {
+                        regions = regions.OrderBy(column => column.Name);
+                    }
+                    if (IsAscending == false)
+                    {
+                        regions = regions.OrderByDescending(column => column.Name);
+                    }
+                }
+
+            regions = regions.Skip((PageIndex * PageSize)).Take(PageSize);
+
+            
+            return await regions.ToListAsync();
         }
 
         public async Task<Region?> GetRegionByIdAsync(Guid Id)
