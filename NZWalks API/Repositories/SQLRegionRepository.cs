@@ -22,7 +22,7 @@ namespace NZWalks_API.Repositories
             
                 if ((filterColumnName != null && filterColumnName.Equals("name", StringComparison.OrdinalIgnoreCase)) || (sortByColumn != null && sortByColumn.Equals("name", StringComparison.OrdinalIgnoreCase )))
                 {
-                    if (!filterValue.IsNullOrEmpty() && !filterColumnName.IsNullOrEmpty())
+                    if ( filterValue != null && filterColumnName != null )
                     {
                         regions = regions.Where(column => column.Name.Contains(filterValue));
                     }
