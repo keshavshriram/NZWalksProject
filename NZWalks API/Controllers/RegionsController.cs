@@ -14,7 +14,7 @@ namespace NZWalks_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class RegionsController : ControllerBase
     {
         private readonly NZWalksDBContext _dbContext;
