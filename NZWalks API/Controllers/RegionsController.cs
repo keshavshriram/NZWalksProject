@@ -29,6 +29,7 @@ namespace NZWalks_API.Controllers
 
 
         [HttpGet]
+        [Authorize]
         public async  Task<IActionResult> GetAll([FromQuery] string? filterColumnName , [FromQuery] string? filterValue , [FromQuery] string? sortByColumn , [FromQuery] bool? IsAscending = null , [FromQuery] int PageIndex = 0 , [FromQuery] int PageSize = 10 )
         {
             //List<Region> regions = await this._dbContext.Regions.ToListAsync();
