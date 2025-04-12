@@ -17,19 +17,19 @@ namespace NZWalks_API.Controllers
     //[Authorize]
     public class RegionsController : ControllerBase
     {
-        private readonly NZWalksDBContext _dbContext;
+        //private readonly NZWalksDBContext _dbContext;
         private readonly IRegionRepository _regionRepository;
         private readonly IMapper mapper;
         public RegionsController(NZWalksDBContext dbContext , IRegionRepository regionRepository , IMapper mapper)
         {
-            this._dbContext = dbContext;
+            //this._dbContext = dbContext;
             this._regionRepository = regionRepository;
             this.mapper = mapper;
         }
 
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Reader")]
         public async  Task<IActionResult> GetAll([FromQuery] string? filterColumnName , [FromQuery] string? filterValue , [FromQuery] string? sortByColumn , [FromQuery] bool? IsAscending = null , [FromQuery] int PageIndex = 0 , [FromQuery] int PageSize = 10 )
         {
             //List<Region> regions = await this._dbContext.Regions.ToListAsync();
